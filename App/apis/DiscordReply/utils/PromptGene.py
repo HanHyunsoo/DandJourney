@@ -2,7 +2,7 @@ from . import interactions, BotSettings
 
 class PromptGenerate:
     """
-    Discord选项生成器
+    Discord옵션 빌더
     """
     def __typeChange(self, TypeIn: type) -> type:
         option_types = {
@@ -22,7 +22,7 @@ class PromptGenerate:
         return [interactions.SlashCommandChoice(name=choiceName, value=Choice[choiceName]) for choiceName in Choice]
 
     def __StaticPrompt(self, Prompt: dict) -> list:
-        # 参数合规检验
+        # 매개변수 규정 준수 검사
         for needValue in ["name", "description", "type", "required"]:
             if needValue not in Prompt:
                 raise ValueError("PromptError: Prompt'{}' is required".format(needValue))

@@ -5,8 +5,8 @@ import re
 
 """
 Prompt Method Group:
-这里放置所有的与参数操作有关的内容
-包含参数组合,参数解析等功能
+매개변수 작동과 관련된 모든 콘텐츠를 여기에 배치하십시오.
+매개 변수 조합, 매개 변수 분석 및 기타 기능 포함
 """
 
 class PromptMix:
@@ -25,28 +25,28 @@ class PromptMix:
         self.style = kwargs.get("style", None)
 
     def BannedCheck(self):
-        # 有黑名单关键词就会进行反馈操作
+        # 블랙리스트에 있는 키워드는 피드백을 제공합니다.
         if self.prompt and any((match := __banned) in self.prompt for __banned in BotSettings["BotParam"]["Banned_Word"]):
             return (False, "Has Banned Word:{}".format(match))
 
     def PromptClear(self, _prompt, splitstr = "--"):
         """
-        检查用户输入的部分是否有链接 是否有自己输入的参数 是否有不合理的参数
-        关于链接有效性 参数错误等等等等,加入对整体的代码性能有较大影响,在前端进行限制即可
-        不要以www开头的链接 是违禁词 会堵塞队列
+        检查用户输入의部分是否有链接 是否有自己输入의参数 是否有不合理의参数
+        소개链接有效性 参数错误等等等等,加入对整体의代码性能有较大影响,在前端进行限制即可
+        하지 말아야 할 것www开头의链接 是违禁词 会堵塞队列
         """
-        # 链接处理
+        # 링크 처리
         LinkPrompt = re.findall(r'https?://\S+', _prompt, flags=re.IGNORECASE)
         LinkStr = ""
-        # 循环将内容中符合条件的链接恢复
+        # 콘텐츠에서 적합한 링크를 복원하는 루프
         for _link in LinkPrompt:
             _prompt = _prompt.replace(_link, "")
             if _link.endswith(("jpg", "jpeg", "png", "gif", "bmp", "webp", "svg", "tiff", "ico")):
                 LinkStr += "{} ".format(_link)
         
-        # 清除内容中的niji
+        # 콘텐츠 지우기niji
         _prompt = re.sub(r"--niji\s+\S*", "", _prompt)
-        # 参数处理,返回参数与用户自己输入的一些设置值
+        # 매개변수 처리, 사용자가 직접 입력한 일부 설정값으로 매개변수를 반환
         result = (lambda x: [x[:x.find(splitstr)].strip(), splitstr + x[x.find(splitstr) + len(splitstr):].strip()] if splitstr in x else False)(_prompt)
         if type(result) == list:
             _prompt = LinkStr + result[0]
@@ -58,10 +58,10 @@ class PromptMix:
         self.BannedCheck()
         # Image + PromptWord + --no + --imageratio + --area + --quality + --stylize + --seed + --chaos + --niji + --version + PromptOption
 
-        # Prompt 处理
+        # Prompt 처리 중
         prompt, UserOpt = self.PromptClear(str(self.prompt))
 
-        # 参数处理
+        # 파라미터 핸들링
         try:
             ImageAdd = " {} ".format(self.image.url) if self.image and hasattr(self.image, 'url') and "http" in self.image.url else "" 
             prompt =  ImageAdd + prompt

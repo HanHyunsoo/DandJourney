@@ -3,16 +3,16 @@ from . import interactions, Button, BotSettings
 
 """
 Component Method Group:
-这里放置所有的与组件有关的内容
-包含组件生成，组件监听，组件删除等功能
+모든 구성 요소 관련 콘텐츠를 여기에 배치하십시오
+구성 요소 빌드 포함，귀속부품 경청，구성 요소 제거와 같은 기능
 """
 
 # Component Handle
 def ActivateButtons(components: list, padding: list) -> tuple:
     """
     Registration：Turns the list of components into an object\\
-    components：    组件列表\\
-    padding：       组件排布方式
+    components：    귀속부품 목록\\
+    padding：       구성 요소 배열
     """
     __tempComList, __tempChecker = [], 0
     if not padding: padding = [5]*5
@@ -33,14 +33,14 @@ def ActivateButtons(components: list, padding: list) -> tuple:
 def CreateMultipleButtons(ButtonName: list,  styleDic: dict = None, custom_idDic: dict = None, emojiDic: dict = None, padding: list = None, disableDic: dict = None, instantiation: bool = False) -> list or object:
     """
     Component：Generate multiple button\\
-    ButtonName：    按钮组件名称列表\\
-    custom_id：     按钮识别码,无规定则与ButtonName一致 Usage : {ButtonName : ButtonID}\\
-    style:          按钮样式 Usage : {ButtonName : ButtonStyle} \\
-    emoji：         是否使用表情符号 Usage : {ButtonName : ButtonEmoji}\\
-    disable：       需要禁用的按钮列表 Usage : {ButtonName : Disabled}\\
+    ButtonName：    버튼 구성 요소 이름 목록\\
+    custom_id：     버튼 식별자, 지정되지 않은 경우,ButtonName매치 Usage : {ButtonName : ButtonID}\\
+    style:          버튼 스타일 Usage : {ButtonName : ButtonStyle} \\
+    emoji：         이모티콘 사용 여부 Usage : {ButtonName : ButtonEmoji}\\
+    disable：       비활성화할 버튼 목록 Usage : {ButtonName : Disabled}\\
     
-    padding：       组件排布方式\\
-    instantiation： 是设置是否需要实例化按钮列表
+    padding：       구성 요소 배열\\
+    instantiation： 인스턴스화 버튼 목록이 필요한 경우 예 설정
     """
     __components = []
     if len(ButtonName) >= 25: return (False, "Description The number of messages reached the upper limit. Initialization failed")
@@ -59,15 +59,15 @@ def CreateMultipleButtons(ButtonName: list,  styleDic: dict = None, custom_idDic
 def CreateSingleButton(ButtonName: str, style: int = 2, custom_id: str = None, emoji: str = None, disable: bool = False, components: list = [], index: int = None, instantiation: bool = False) -> list:
     """
     Component：Generate single button\\
-    ButtonName:    按钮名称\\
-    style:         按钮样式\\
-    custom_id：    按钮识别码,无规定则与ButtonName一致\\
-    emoji：        是否使用表情符号\\
-    disable：      是否禁用按钮\\
+    ButtonName:    버튼 이름\\
+    style:         버튼 스타일\\
+    custom_id：    버튼 식별자, 지정되지 않은 경우,ButtonName매치\\
+    emoji：        이모티콘 사용 여부\\
+    disable：      버튼을 비활성화 하시겠습니까?\\
     
-    components：   需要添加新按钮的列表\\
-    index：        新按钮插入的位置\\
-    instantiation：是否需要实例化按钮列表
+    components：   추가할 새 버튼 목록\\
+    index：        새 버튼 삽입 위치\\
+    instantiation：인스턴스화 버튼 목록이 필요합니까?
     """
     components.insert(len(components) if index is None else index, Button(style = style, custom_id = custom_id if custom_id else ButtonName, label = ButtonName, emoji = emoji, disabled = disable))
     return ActivateButtons(components) if instantiation else components
@@ -79,10 +79,10 @@ def CreateSingleButton(ButtonName: str, style: int = 2, custom_id: str = None, e
 def ButtonClick(ctx: interactions.ComponentContext, styleNeed: int = 1, disable: bool = True, Switch: list = []) -> list:
     """
     Component：Click Button Method\\
-    ctx 是按钮事件的CommandContext
-    styleNeed 是指定按钮样式，默认为启用状态
-    disable 是指定按钮可用性，默认禁用
-    Switch 是切换列表，默认为更改按钮模式
+    ctx 버튼 이벤트CommandContext
+    styleNeed 버튼 스타일 지정，기본값으로 사용
+    disable 버튼이 지정되어 있는지 여부，기본값으로 사용 안 함
+    Switch 토글 목록，버튼 모드 변경 기본값
     """
     __tempList = []
     __buttonList = [interactions.ButtonStyle.PRIMARY, interactions.ButtonStyle.SECONDARY, interactions.ButtonStyle.SUCCESS, interactions.ButtonStyle.DANGER]
@@ -91,12 +91,12 @@ def ButtonClick(ctx: interactions.ComponentContext, styleNeed: int = 1, disable:
         for __component in __action.components:
             button = Button(style = __component.style, custom_id = __component.custom_id, label = __component.label, disabled = __component.disabled)
             if Switch:
-                # 按钮状态切换
+                # 버튼 상태 토글
                 if __component.custom_id == BotSettings[Switch[0]][Switch[1]] or __component.custom_id == ctx.component.custom_id:
                     button.style = __buttonList[1] if str(__component.style)=="1" else __buttonList[0] 
                     button.disabled = False if __component.disabled else True
             else:
-                # 按钮状态设置
+                # 버튼 상태 설정
                 if __component.custom_id == ctx.component.custom_id:
                     button.style = __buttonList[styleNeed-1]
                     button.disabled = disable

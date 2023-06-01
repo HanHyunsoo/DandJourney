@@ -18,9 +18,9 @@ class BotEventCls(Extension):
 
         UVComponent = CreateMultipleButtons(ButtonName = ["U1", "U2", "U3", "U4", "V1", "V2", "V3", "V4", "🔁 Refresh", "🈴 Mix Them"], 
                                             custom_idDic = {"🔁 Refresh":"Refresh", "🈴 Mix Them":"BlendG"}, padding = [4,4,2], disableDic = {"🈴 Mix Them": True}, instantiation=True)
-        # 注意,新增的三个U按钮有执行顺序(),且发送的是消息更新on_MessageUpdate,用on_MessageCreate接不到
-        # 鉴于目前确实按钮时多时少,等稳定了会把UV并入一条队列中,减少空间占用
-        # 所以发现有些按钮点不了了就先不用提Issus
+        # 주목, 세 번 더.U버튼에 실행 순서가 있습니다()메시지 업데이트 전송 중.on_MessageUpdate, 에 대하여on_MessageCreate도달불가
+        # 현재 버튼이 거의 없다는 것을 감안할 때, 안정적일 때,UV대기열에 병합하여 공간 사용량 줄이기
+        # 따라서 일부 버튼을 클릭할 수 없는 경우 먼저 언급할 필요가 없습니다.Issus
         MakeVComponent = CreateMultipleButtons(ButtonName = ["🔉 Describe", "🎁 Make Variations", "🔄 Remaster", "💡 Add Prompt", "🌈 Light Refinement", "🌈 Detail Refinement", "🌈 Reality Refinement"], 
                                             custom_idDic = {"🔉 Describe": "DescribeU", "🎁 Make Variations": "VariationU", "🔄 Remaster": "Remaster", "💡 Add Prompt": "RePrompt", 
                                                             "🌈 Light Refinement": "LightU", "🌈 Detail Refinement": "DetailU", "🌈 Reality Refinement": "RealityU"}, 
@@ -29,7 +29,7 @@ class BotEventCls(Extension):
         self.UVComponent = UVComponent[1] if UVComponent[0] else None
         self.MakeVComponent = MakeVComponent[1] if MakeVComponent[0] else None
         self.describeBox = []
-        print("按钮实例化完毕")
+        print("버튼 인스턴트화 완료")
         
 
     @listen()
@@ -47,10 +47,10 @@ class BotEventCls(Extension):
                     if message.id not in self.describeBox:
 
                         self.describeBox.append(message.id)
-                        # 临时写法,只能用在Discord上面
-                        # Describe的问题很大,传递的照片一旦出问题很容易堵塞队列,在按时间清除队列元素写法出来前不建议使用
-                        # API用法不要用这种写法,会堵塞队列影响User绑定
-                        # 不建议加组件按钮去实现功能,有时候它自己会生成一些黑名单的词,导致阻塞进程
+                        # 임시 글쓰기 전용.Discord위
+                        # Describe문제는 훌륭합니다. 사진이 통과되면 대기열을 막기 쉽습니다. 시간에 따라 대기열 요소를 지우기 전에 사용하는 것이 좋습니다.
+                        # API사용 이러한 종류의 쓰기를 사용하지 마십시오. 대기열 효과를 차단합니다.User바인딩
+                        # 기능을 구현하기 위해 구성 요소 버튼을 추가하는 것은 권장되지 않습니다. 때로는 블랙리스트에 있는 단어를 생성하여 프로세스를 차단합니다.
                         _DiscordQueue = SystemQueue.find_queue(DQueueFQID)[1].find("Mode", "DC")[0]
                         _emb = DescribeEmb(message.embeds[0].description, _DiscordQueue["Image"])
 
@@ -72,18 +72,18 @@ class BotEventCls(Extension):
         if message.content == "": return
         if message.author.bot:
             try:
-            # 减少判断条件数量，其他归并做忽略处理 
-            # 经测试无法删除MidJourney的原始消息，否则会404_No_Message，如果觉得重复生成比较烦，可以专门开一个区用来存放生成的内容
+            # 판단 조건의 수 감소，기타 방치된 병합 
+            # 테스트한 항목은 삭제할 수 없습니다MidJourney원본 메시지，그렇지 않으면, 예.404_No_Message，중복 생성에 짜증이 난다면，생성된 콘텐츠를 저장하기 위해 섹션을 열 수 있습니다.
             
-            # 前置条件 取出队列的数据
+            # 前置 取出队列의数据
                 Queue_msg = QueueParse(message.content, SystemQueue)
             
-            # 条件1：当消息为Midjourney发送，且能够获取相关的信息，则自动回复这条消息获得targetID 与 targetHash
+            # 1：메시지가Midjourney보내기，관련 정보에 접근할 수 있습니다.，이 메시지에 자동으로 회신하세요.targetID 와 targetHash
 
-            # update 1:这里有bug,暂时没办法通过消息去获得队列中按钮触发的队列信息(JobID不能通过按钮传递)
-            #          现在采用时间差的方式实现该功能,若Midjourney的回复不按照时间顺序触发,则会引发消息转发对象异常的bug
-            #          update 1 for Discord: 目前采用两个队列,分别记录需要时间生成(如Imagine/Blend等指令)的任务与不需要时间的任务(U细分/Describe)
-            #          update 1 for Api:在获取到下一次消息后将上一次的迭代消息删除,或在发送请求后暂停user的消息接收
+            # update 1:여기 있습니다.bug그러나 일시적으로 메시지를 통해 대기열의 버튼에 의해 트리거되는 대기열 정보를 가져올 수 없습니다(JobID버튼으로 통과할 수 없음)
+            #          이 함수는 이제 시간차 방식으로 구현됩니다.Midjourney의 답장이 시간 순서대로 트리거되지 않으면 메시지 전달 객체가 비정상 상태가 됩니다.bug
+            #          update 1 for Discord: 현재 두 개의 대기열이 사용되며, 각 녹음은 생성에 시간이 걸립니다.(예를 들어,Imagine/Blend지시 대기 중)시간이 필요하지 않은 작업 및 작업(U세분화/Describe)
+            #          update 1 for Api:다음 메시지를 받은 후 마지막 반복 메시지를 삭제하거나 요청을 보낸 후 일시 중지합니다.user메시지 수신
 
                 if message.attachments and Queue_msg[0] and message.author.username == "Midjourney Bot":
 
@@ -94,7 +94,7 @@ class BotEventCls(Extension):
                     agency = CreateAgency(message, Qmsg[0], msgID)
                     await message.reply(content = agency)
 
-            # 条件2：当消息为Bot发送，且内容关于图像操作，则获得对象,此时指向图片的UV细分
+            # 2：메시지가Bot보내기，이미지 작업에 대한 내용입니다.，그 다음에 객체를 가져오고, 이 시점에서 그림을 가리키고,UV세분화
                 if message.author.username == BotSettings["BotInfo"]["Name"] and "Get Bot Message for" in message.content:
                     _mode, _user, _embed, _channel, _JobID, _msgJobID = ImageEmb(message)
                     signalChannel = self.client.get_channel(int(_channel if BotSettings["BotOpt"]["AGENT_SIGN"] else message.channel.id))

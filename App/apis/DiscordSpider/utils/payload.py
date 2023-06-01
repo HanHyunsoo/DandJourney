@@ -8,7 +8,7 @@ from .Globals import Describe as DescribePrompt
 
 def JsonImagine(MID_JOURNEY_ID : str, SERVER_ID : str, CHANNEL_ID : str, prompt : str) -> dict:
     """
-    Imagine 方法请求参数生成
+    Imagine 메서드 요청 파라미터 생성
     """
     __payload = {
         "type":2,
@@ -41,8 +41,8 @@ def JsonImagine(MID_JOURNEY_ID : str, SERVER_ID : str, CHANNEL_ID : str, prompt 
 
 def JsonMorph(MID_JOURNEY_ID : str, SERVER_ID : str, CHANNEL_ID : str, index : int, messageId : str, messageHash : str, morph : str, solo : bool = False) -> dict:
     """
-    PicMorph 方法请求参数生成
-    包含 upsample、variation、reroll 三种方法
+    PicMorph 메서드 요청 파라미터 생성
+    포함 upsample、variation、reroll 세 가지 방법
     """
     __payload = {
         "type":3,
@@ -62,7 +62,7 @@ def JsonMorph(MID_JOURNEY_ID : str, SERVER_ID : str, CHANNEL_ID : str, index : i
 
 def JsonFast(MID_JOURNEY_ID : str, SERVER_ID : str, CHANNEL_ID : str):
     """
-    Fast 方法请求参数生成
+    Fast 메서드 요청 파라미터 생성
     """
     __payload = {
         "type":2,
@@ -88,7 +88,7 @@ def JsonFast(MID_JOURNEY_ID : str, SERVER_ID : str, CHANNEL_ID : str):
 
 def JsonRelax(MID_JOURNEY_ID : str, SERVER_ID : str, CHANNEL_ID : str) -> dict:
     """
-    Relax 方法请求参数生成
+    Relax 메서드 요청 파라미터 생성
     """
     __payload = {
         "type":2,
@@ -122,7 +122,7 @@ def JsonRegImg(filename : str, filesize : int) -> dict:
 
 def JsonBlend(MID_JOURNEY_ID : str, SERVER_ID : str, CHANNEL_ID : str, options : list, attachments : list) -> dict:
     """
-    Blend 方法请求参数生成
+    Blend 메서드 요청 파라미터 생성
     """
     __payload = {
         "type":2,
@@ -156,7 +156,7 @@ def JsonBlend(MID_JOURNEY_ID : str, SERVER_ID : str, CHANNEL_ID : str, options :
 
 def JsonDescribe(MID_JOURNEY_ID : str, SERVER_ID : str, CHANNEL_ID : str, attachments : list) -> dict:
     """
-    Describe 方法请求参数生成
+    Describe 메서드 요청 파라미터 생성
     """
     __payload = {
         "type":2,

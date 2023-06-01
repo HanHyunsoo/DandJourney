@@ -7,9 +7,9 @@ from . import BotSettings
 
 class PostMethod():
     """
-    父类 PostMethod：
-    该方法用于生成配置一些基础参数与基础方法
-    该类可以自定义添加一些动态方法
+    상위 카테고리 PostMethod：
+    이 메소드는 몇 가지 기본 매개 변수와 기본 메소드를 생성하고 구성하는 데 사용됩니다.
+    이 클래스는 일부 동적 메소드를 추가하도록 사용자 정의할 수 있습니다
     """
     def __init__(self, MID_JOURNEY_ID : str, SERVER_ID : str, CHANNEL_ID : str, VIP_TOKEN : str) -> None:
         self.MID_JOURNEY_ID = MID_JOURNEY_ID
@@ -23,7 +23,7 @@ class PostMethod():
 
     def __ResponseCheck(self, Response):
         """
-        验证请求状态，类内方法
+        요청 상태 확인，수업 중 방법
         """
         if Response.status_code >= 400:
             return (False, "ResponseError in Location:{}, Msg:{}, Code:{}".format("ResponseCheck" ,Response.text, Response.status_code))
@@ -31,7 +31,7 @@ class PostMethod():
 
     def GetResponse(self, json : dict) -> bool:
         """
-        验证请求状态，类外方法
+        요청 상태 확인，부류 외 방법
         """
         try:
             response = requests.post(url = self.URL, json = json, headers = self.header)
@@ -41,8 +41,8 @@ class PostMethod():
 
     def ImageStorage(self, ImageName : str, ImageUrl : str, ImageSize : int, prompt: str) -> tuple:
         """
-        将Discord外链进行转存处理，并获取内链
-        update 1: 支持添加所需要的参数,目前为JobID
+        유언Discord역전사슬의 재처리，내부 체인을 가져옵니다.
+        update 1: 현재 필수 매개 변수 추가 지원JobID
         """
         try:
             ImageName = ImageName.split(".")
@@ -71,7 +71,7 @@ class PostMethod():
 
     def RefreshChannel(self, ChannelID : str) -> None:
         """
-        刷新频道
+        채널 새로고침
         """
         self.CHANNEL_ID = ChannelID
         return
@@ -79,9 +79,9 @@ class PostMethod():
 
 class DecoratorCls:
     """
-    装饰器类：
-    此类中存储所有需要的装饰器
-    预留位置，暂时不用
+    데코레이터 클래스：
+    이 클래스에 필요한 모든 데코레이터를 저장합니다.
+    예약된 위치，지금은 안돼요
     """
     def ChannelDC(self, func):
         def wrapper(innerSelf):
@@ -98,7 +98,7 @@ class DiscordPost(PostMethod):
 
     def Imagine(self, prompt : str, channel : str = None) -> object:
         """
-        用于图片生成
+        이미지 생성용
         """
         __payload = JsonImagine(self.MID_JOURNEY_ID, self.SERVER_ID, channel if channel else self.CHANNEL_ID, 
                                 prompt)
@@ -107,7 +107,7 @@ class DiscordPost(PostMethod):
 
     def Upscale(self, index : int, messageId : str, messageHash : str, channel : str = None):
         """
-        用于图片放大 U按钮
+        이미지 확대에 사용 U버튼
         """
         __payload = JsonMorph(self.MID_JOURNEY_ID, self.SERVER_ID, channel if channel else self.CHANNEL_ID,
                               index, messageId, messageHash, "upsample")
@@ -116,7 +116,7 @@ class DiscordPost(PostMethod):
     
     def Variation(self, index : int, messageId : str, messageHash : str, solo : bool = False, channel : str = None):
         """
-        用于图片细分 V按钮
+        이미지 분할에 사용됨 V버튼
         """
         __payload = JsonMorph(self.MID_JOURNEY_ID, self.SERVER_ID, channel if channel else self.CHANNEL_ID,
                               index, messageId, messageHash, "variation", solo=solo)
@@ -125,7 +125,7 @@ class DiscordPost(PostMethod):
     
     def Remaster(self, index : int, messageId : str, messageHash : str, channel : str = None):
         """
-        用于大图细分 Remaster按钮
+        큰 이미지 세분화용 Remaster버튼
         """
         __payload = JsonMorph(self.MID_JOURNEY_ID, self.SERVER_ID, channel if channel else self.CHANNEL_ID,
                               index, messageId, messageHash, "remaster", solo = True)
@@ -134,7 +134,7 @@ class DiscordPost(PostMethod):
 
     def LUpscale(self, index : int, messageId : str, messageHash : str, channel : str = None):
         """
-        用于大图光影细分 Light Upscale Redo 按钮
+        큰 이미지 빛 및 그림자 분할에 사용 Light Upscale Redo 버튼
         """
         __payload = JsonMorph(self.MID_JOURNEY_ID, self.SERVER_ID, channel if channel else self.CHANNEL_ID,
                               index, messageId, messageHash, "upsample_light", solo = True)
@@ -143,7 +143,7 @@ class DiscordPost(PostMethod):
 
     def DUpscale(self, index : int, messageId : str, messageHash : str, channel : str = None):
         """
-        用于大图细节细分 Detailed Upscale Redo 按钮
+        큰 세부 세분화용 Detailed Upscale Redo 버튼
         """
         __payload = JsonMorph(self.MID_JOURNEY_ID, self.SERVER_ID, channel if channel else self.CHANNEL_ID,
                               index, messageId, messageHash, "upsample", solo = True)
@@ -152,7 +152,7 @@ class DiscordPost(PostMethod):
     
     def BUpscale(self, index : int, messageId : str, messageHash : str, channel : str = None):
         """
-        用于大图二阶细分 Beta Upscale Redo 按钮
+        큰 이미지의 2차 분할에 사용됨 Beta Upscale Redo 버튼
         """
         __payload = JsonMorph(self.MID_JOURNEY_ID, self.SERVER_ID, channel if channel else self.CHANNEL_ID,
                               index, messageId, messageHash, "upsample_beta", solo = True)
@@ -161,7 +161,7 @@ class DiscordPost(PostMethod):
 
     def Fast(self):
         """
-        切换出图模式为:Fast
+        다이어그램 모드를 다음으로 전환::Fast
         """
         __payload = JsonFast(self.MID_JOURNEY_ID, self.SERVER_ID, self.CHANNEL_ID)
         response = self.GetResponse(json = __payload)
@@ -169,7 +169,7 @@ class DiscordPost(PostMethod):
     
     def Relax(self):
         """
-        切换出图模式为:Relax
+        다이어그램 모드를 다음으로 전환::Relax
         """
         __payload = JsonRelax(self.MID_JOURNEY_ID, self.SERVER_ID, self.CHANNEL_ID)
         response = self.GetResponse(json = __payload)
@@ -177,7 +177,7 @@ class DiscordPost(PostMethod):
 
     def Blend(self, ImageSet : list, Dimensions : str, prompt : str, channel : str = None):
         """
-        图片混合
+        그림 블렌드
         """
         __options , __attachments = [], []
         for Image in ImageSet:
@@ -197,7 +197,7 @@ class DiscordPost(PostMethod):
     
     def Refresh(self, index : int, messageId : str, messageHash : str, channel : str = None):
         """
-        用于刷新图片
+        사진을 새로고침하는 데 사용됩니다.
         """
         __payload = JsonMorph(self.MID_JOURNEY_ID, self.SERVER_ID, channel if channel else self.CHANNEL_ID,
                               index, messageId, messageHash, "reroll", solo=True)
@@ -206,7 +206,7 @@ class DiscordPost(PostMethod):
     
     def Describe(self, Image : object, prompt : str, channel : str = None):
         """
-        用于描述图片
+        그림 설명에 사용됨
         """
         response = self.ImageStorage(ImageName = Image.__getattribute__("filename"), ImageUrl = Image.__getattribute__("url"), ImageSize = Image.__getattribute__("size"), prompt = prompt)
         if response[0]:
@@ -219,7 +219,7 @@ class DiscordPost(PostMethod):
     
     def RegisterImage(self, filename : str, filesize : int, url : str):
         """
-        注册图片，用于外链图片上传
+        이미지 등록，추천 이미지 업로드
         """
         __payload = JsonRegImg(filename, filesize, url)
         response = self.GetResponse(json = __payload)

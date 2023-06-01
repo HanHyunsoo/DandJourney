@@ -13,4 +13,4 @@ DiscordQueue = SystemQueue.find_queue(DQueueID)
 SystemQueue.create_queue(DQueueFQID, 100, "DiscordQuick", is_isolation = True)
 DiscordQueue = SystemQueue.find_queue(DQueueFQID)
 
-print("数据系统队列初始化完毕,当前队列:{}".format(SystemQueue.queueList()))
+print("데이터 시스템 큐 초기화됨, 현재 큐:{}".format(SystemQueue.queueList()))

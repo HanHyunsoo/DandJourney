@@ -33,7 +33,7 @@ class BotComponentCls(Extension):
     async def on_component(self, event: Component, **kwargs):
         ctx = event.ctx
 
-        # Fast / Relax 模式
+        # Fast / Relax 모드
         if "Fast" in ctx.custom_id or "Relax" in ctx.custom_id:
             response = PostAgent.Fast() if ctx.custom_id == "Fast" else PostAgent.Relax()
 
@@ -41,12 +41,12 @@ class BotComponentCls(Extension):
                 await ctx.edit_origin(components = ButtonClick(ctx, Switch=["BotInit", "Speed"]))
                 BotSettings["BotInit"]["Speed"] = ctx.custom_id
                 signalChannel = self.client.get_channel(int(ctx.channel_id))
-                await signalChannel.send('模式切换至:{}'.format(ctx.custom_id))
+                await signalChannel.send('모드 전환:{}'.format(ctx.custom_id))
 
             else:
                 await ctx.send(response[1])
 
-        # U / V 模式
+        # U / V 모드
         elif len(ctx.custom_id) == 2 and ("U" in ctx.custom_id or "V" in ctx.custom_id):
             ChannelSwitch(ctx)
             targetDict = {}
@@ -64,11 +64,11 @@ class BotComponentCls(Extension):
                 _insert = SystemQueue.insert_queue(QID,{"User":ctx.author_id, "Channel":ctx.channel_id, "Mode":"BT{}".format(self.KeyMap[ctx.custom_id])}, UpJob=targetDict["JobID"], otherKey="#{}".format(self.KeyMap[ctx.custom_id]))
                 await ctx.edit_origin(components = ButtonClick(ctx))
                 signalChannel = self.client.get_channel(int(ctx.channel_id))
-                await signalChannel.send('正在进行操作：{}细分'.format(ctx.custom_id), ephemeral=True)
+                await signalChannel.send('작업 진행 중：{}세분화'.format(ctx.custom_id), ephemeral=True)
             else:
                 await ctx.send(response[1])
 
-        # Refresh 模式
+        # Refresh 모드
         elif ctx.custom_id == "Refresh":
             ChannelSwitch(ctx)
             targetDict = {}
@@ -80,15 +80,15 @@ class BotComponentCls(Extension):
                 _insert = SystemQueue.insert_queue(DQueueID,{"User":ctx.author_id, "Channel":ctx.channel_id, "Mode":"BT{}".format(self.KeyMap[ctx.custom_id])}, UpJob=targetDict["JobID"], otherKey="#{}".format(self.KeyMap[ctx.custom_id]))
                 await ctx.edit_origin(components = ButtonClick(ctx, disable = False))
                 signalChannel = self.client.get_channel(int(ctx.channel_id))
-                await signalChannel.send('DandJourney重新生成照片中...', ephemeral=True)
+                await signalChannel.send('DandJourney사진 재생성 중...', ephemeral=True)
 
             else:
                 await ctx.send(response[1])
 
-        # BlendG 模式 待评估  需求量感觉没多少
+        # BlendG 모드 待评估  需求量感觉没多少
 
 
-        # DescribeU 模式 现在获得不了embed的image信息 等后面更新
+        # DescribeU 모드 现在获得不了embed의image信息 等后面更新
         elif ctx.custom_id == "DescribeU":
             ChannelSwitch(ctx)
             targetDict = {}
@@ -102,9 +102,9 @@ class BotComponentCls(Extension):
                 _insert = SystemQueue.insert_queue(DQueueFQID,{"User":ctx.author_id, "Channel":ctx.channel_id, "Mode":"DC", "Image": image.__getattribute__("url")})
                 await ctx.edit_origin(components = ButtonClick(ctx, disable = False))
                 signalChannel = self.client.get_channel(int(ctx.channel_id))
-                await signalChannel.send('DandJourney描述生成照片中...', ephemeral=True)
+                await signalChannel.send('DandJourney설명 사진 생성 중...', ephemeral=True)
 
-        # VariationU 模式
+        # VariationU 모드
         elif ctx.custom_id == "VariationU":
             ChannelSwitch(ctx)
             targetDict = {}
@@ -116,12 +116,12 @@ class BotComponentCls(Extension):
                 _insert = SystemQueue.insert_queue(DQueueID,{"User":ctx.author_id, "Channel":ctx.channel_id, "Mode":"BT{}".format(self.KeyMap[ctx.custom_id])}, UpJob=targetDict["JobID"], otherKey="#{}".format(self.KeyMap[ctx.custom_id]))
                 await ctx.edit_origin(components = ButtonClick(ctx, disable = False))
                 signalChannel = self.client.get_channel(int(ctx.channel_id))
-                await signalChannel.send('DandJourney细分发散模式生成照片中...', ephemeral=True)
+                await signalChannel.send('DandJourney세분화 모드에서 사진 생성 중...', ephemeral=True)
 
             else:
                 await ctx.send(response[1])
 
-        # Remaster 模式
+        # Remaster 모드
         elif ctx.custom_id == "Remaster":
             ChannelSwitch(ctx)
             targetDict = {}
@@ -133,15 +133,15 @@ class BotComponentCls(Extension):
                 _insert = SystemQueue.insert_queue(DQueueID,{"User":ctx.author_id, "Channel":ctx.channel_id, "Mode":"BT{}".format(self.KeyMap[ctx.custom_id])}, UpJob=targetDict["JobID"], otherKey="#{}".format(self.KeyMap[ctx.custom_id]))
                 await ctx.edit_origin(components = ButtonClick(ctx, disable = False))
                 signalChannel = self.client.get_channel(int(ctx.channel_id))
-                await signalChannel.send('DandJourney重复发散模式生成照片中...', ephemeral=True)
+                await signalChannel.send('DandJourney분기 모드 반복 사진 생성 중...', ephemeral=True)
 
             else:
                 if "Invalid Form Body" in response[1]:
-                    await ctx.send("该按钮在此消息上不可用，敬请期待后续开发")
+                    await ctx.send("이 메시지에서 버튼을 사용할 수 없습니다，앞으로의 발전을 기대해 주세요.")
                 else:
                     await ctx.send(response[1])
 
-        # LightU 模式
+        # LightU 모드
         elif ctx.custom_id == "LightU":
             ChannelSwitch(ctx)
             targetDict = {}
@@ -153,17 +153,17 @@ class BotComponentCls(Extension):
                 _insert = SystemQueue.insert_queue(DQueueID,{"User":ctx.author_id, "Channel":ctx.channel_id, "Mode":"BT{}".format(self.KeyMap[ctx.custom_id])}, UpJob=targetDict["JobID"], otherKey="#{}".format(self.KeyMap[ctx.custom_id]))
                 await ctx.edit_origin(components = ButtonClick(ctx, disable = False))
                 signalChannel = self.client.get_channel(int(ctx.channel_id))
-                await signalChannel.send('DandJourney光影重复发散模式生成照片中...', ephemeral=True)
+                await signalChannel.send('DandJourney라이트 섀도우 리피트 다이버전스 모드 사진 생성 중...', ephemeral=True)
 
             else:
                 if "Invalid Form Body" in response[1]:
                     await ctx.edit_origin(components = ButtonClick(ctx))
                     signalChannel = self.client.get_channel(int(ctx.channel_id))
-                    await signalChannel.send('该按钮在此消息上不可用，敬请期待后续开发')
+                    await signalChannel.send('이 메시지에서 버튼을 사용할 수 없습니다，앞으로의 발전을 기대해 주세요.')
                 else:
                     await ctx.send(response[1])
         
-        # DetailU 模式
+        # DetailU 모드
         elif ctx.custom_id == "DetailU":
             ChannelSwitch(ctx)
             targetDict = {}
@@ -175,17 +175,17 @@ class BotComponentCls(Extension):
                 _insert = SystemQueue.insert_queue(DQueueID,{"User":ctx.author_id, "Channel":ctx.channel_id, "Mode":"BT{}".format(self.KeyMap[ctx.custom_id])}, UpJob=targetDict["JobID"], otherKey="#{}".format(self.KeyMap[ctx.custom_id]))
                 await ctx.edit_origin(components = ButtonClick(ctx, disable = False))
                 signalChannel = self.client.get_channel(int(ctx.channel_id))
-                await signalChannel.send('DandJourney细节重复发散模式生成照片中...', ephemeral=True)
+                await signalChannel.send('DandJourney디테일 반복 발산 모드 사진 생성 중...', ephemeral=True)
 
             else:
                 if "Invalid Form Body" in response[1]:
                     await ctx.edit_origin(components = ButtonClick(ctx))
                     signalChannel = self.client.get_channel(int(ctx.channel_id))
-                    await signalChannel.send('该按钮在此消息上不可用，敬请期待后续开发')
+                    await signalChannel.send('이 메시지에서 버튼을 사용할 수 없습니다，앞으로의 발전을 기대해 주세요.')
                 else:
                     await ctx.send(response[1])
             
-        # RealityU 模式
+        # RealityU 모드
         elif ctx.custom_id == "RealityU":
             ChannelSwitch(ctx)
             targetDict = {}
@@ -197,13 +197,13 @@ class BotComponentCls(Extension):
                 _insert = SystemQueue.insert_queue(DQueueID,{"User":ctx.author_id, "Channel":ctx.channel_id, "Mode":"BT{}".format(self.KeyMap[ctx.custom_id])}, UpJob=targetDict["JobID"], otherKey="#{}".format(self.KeyMap[ctx.custom_id]))
                 await ctx.edit_origin(components = ButtonClick(ctx, disable = False))
                 signalChannel = self.client.get_channel(int(ctx.channel_id))
-                await signalChannel.send('DandJourney真实重复发散模式生成照片中...', ephemeral=True)
+                await signalChannel.send('DandJourney실제 반복 발산 모드 사진 생성 중...', ephemeral=True)
 
             else:
                 if "Invalid Form Body" in response[1]:
                     await ctx.edit_origin(components = ButtonClick(ctx))
                     signalChannel = self.client.get_channel(int(ctx.channel_id))
-                    await signalChannel.send('该按钮在此消息上不可用，敬请期待后续开发')
+                    await signalChannel.send('이 메시지에서 버튼을 사용할 수 없습니다，앞으로의 발전을 기대해 주세요.')
                 else:
                     await ctx.send(response[1])
 
@@ -213,9 +213,9 @@ class BotComponentCls(Extension):
             for _emb in ctx.message.embeds[0].fields: targetDict.update({_emb.name: _emb.value})
 
             my_modal = Modal(
-                ParagraphText(label="添加辅助描述词", custom_id="Prompt"),
-                ShortText(label="描述词权重", custom_id="Weight", placeholder="0-15之间的整数,数字越大占比越高"),
-                title="描述词添加",
+                ParagraphText(label="보조 설명자 추가", custom_id="Prompt"),
+                ShortText(label="단어 무게 설명", custom_id="Weight", placeholder="0-15그 사이의 정수, 숫자가 클수록 비중이 높다."),
+                title="설명 단어 추가",
             )
 
             await ctx.send_modal(modal=my_modal)

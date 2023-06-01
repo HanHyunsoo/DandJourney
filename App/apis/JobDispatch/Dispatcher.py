@@ -1,23 +1,23 @@
-# 定义队列类, 还没做并发处理
+# 定义队列类, 还没做并发처리 중
 
 import sys
 import datetime
 
 """
-队列与队列管理器Job
-用于统一管理项目的队列,分配单时刻的任务
-操作Job即可进行队列的插入与删除,以及针对性的查找队列
+대기열 및 대기열 관리자Job
+단일 순간에 작업을 할당하는 프로젝트의 통합 관리를 위한 대기열
+작업Job대상 검색 대기열뿐만 아니라 대기열 삽입 및 삭제를 위해
 
-目前还未完全完成
+아직 완료되지 않음
 """
 
 class QueueCls:
     def __init__(self, queue_name, queue_size, queue_value, is_isolation):
         """
-        queue_name : 队列名
-        queue_size : 队列大小(非内存大小)
-        queue_value : 队列值
-        is_isolation : 是否隔离队列(用于智能插入队列模式)
+        queue_name : 대기열 이름
+        queue_size : 대기열 크기(비메모리 크기)
+        queue_value : 대기열 값
+        is_isolation : 대기열이 격리되어 있습니다(대기열 패턴을 지능적으로 삽입하는 데 사용됩니다.)
         """
         self.queue_name = queue_name
         self.queue_size = queue_size
@@ -27,7 +27,7 @@ class QueueCls:
 
     def get_unused_job_id(self, UpJob):
         """
-        获取队列未被引用的JobID
+        큐를 참조하지 않음JobID
         """
         used_ids = [item['JobID'][10:] for item in self.queue]
         _date = datetime.datetime.now().strftime("%m%d%H%M%S")
@@ -42,7 +42,7 @@ class QueueCls:
 
     def insert(self, element, otherKey, UpJob):
         """
-        插入队列值
+        대기열 값 삽입
         """
         job_id = self.get_unused_job_id(UpJob)
         if job_id[0]:
@@ -52,7 +52,7 @@ class QueueCls:
 
     def remove(self, job_id):
         """
-        删除队列值
+        대기열 값 삭제
         """
         removed_elements = []
         for item in self.queue:
@@ -62,12 +62,12 @@ class QueueCls:
         return removed_elements
 
     def find(self, any_key, any_value, dim = None):
-        "根据键值对查找队列元素"
+        "키-값 쌍을 기반으로 대기열 요소 찾기"
         return [item for item in self.queue if item[any_key][:dim] == any_value]
 
     def extract(self):
         """
-        队列验证
+        큐 유효성 검사
         """
         if self.queue:
             return (True, self.queue[0])
@@ -76,7 +76,7 @@ class QueueCls:
 
     def last(self, PutAll = False, length = False):
         """
-        队列剩余内容输出
+        남은 대기열 출력
         """
         if PutAll:
             return [item for item in self.queue]
@@ -87,7 +87,7 @@ class QueueCls:
         
     def get_memory(self):
         """
-        获得队列的空间占用
+        대기열에 대한 공간 확보
         """
         total_memory = sum(sys.getsizeof(item) for item in self.queue)
         return total_memory
@@ -99,7 +99,7 @@ class Job:
 
     def create_queue(self, queue_name, queue_size, queue_value, is_isolation=False):
         """
-        创建队列
+        대기열 생성
         """
         if queue_name not in self.queues:
             self.queues[queue_name] = QueueCls(queue_name, queue_size, queue_value, is_isolation)
@@ -109,7 +109,7 @@ class Job:
 
     def delete_queue(self, queue_name):
         """
-        删除队列
+        대기열 삭제
         """
         if queue_name in self.queues:
             del self.queues[queue_name]
@@ -119,7 +119,7 @@ class Job:
 
     def find_queue(self, queue_name):
         """
-        根据队列名查找队列
+        대기열 이름으로 대기열 찾기
         """
         if queue_name in self.queues:
             return (True, self.queues[queue_name])
@@ -128,19 +128,19 @@ class Job:
 
     def queueList(self):
         """
-        输出队列列表
+        출력 대기열 목록
         """
         return [_queue for _queue in self.queues.keys()]
     
     def queueAllItem(self, PutAll = False, length = False):
         """
-        输出所有队列的所有元素
+        모든 큐의 모든 요소 출력
         """
         return [self.queues[_queue].last(PutAll, length) for _queue in self.queues.keys()]
     
     def insert_queue(self, queue_name, element, UpJob = "", otherKey = ""):
         """
-        向指定队列插入元素
+        지정된 큐에 요소를 삽입합니다
         """
         if queue_name in self.queues:
             queue = self.queues[queue_name]
@@ -151,9 +151,9 @@ class Job:
 
     def insert_queue_S(self, element, authority, NoneQueue, UpJob = "", otherKey = ""):
         """
-        智能插入队列模式
-        使用此方法插入数据并打开智能插入,会根据条件自动选择满足条件的队列进行插入操作
-        目前条件:选择队列长度最短的元素进行插入
+        스마트 인서트 큐 모드
+        이 방법을 사용하여 데이터를 삽입하고 조건에 따라 삽입 조건을 충족하는 대기열을 자동으로 선택하는 스마트 삽입을 엽니다.
+        현재 상태:삽입할 대기열 길이가 가장 짧은 요소를 선택합니다.
         """
         if authority:
             queue_to_insert = min((q for q in self.queues.values() if not q.is_isolation), key=lambda q: q.last(length = True))
@@ -168,7 +168,7 @@ class Job:
 
     def delete_queue_value(self, queue_id, job_id):
         """
-        删除指定队列中JobID指向的元素
+        지정된 대기열에서 삭제JobID포인팅 요소
         """
         if queue_id in self.queues:
             queue = self.queues[queue_id]
@@ -180,8 +180,8 @@ class Job:
         
     def get_memory(self):
         """
-        查询队列管理器目前内存
-        队列中若出现对象,此算法将失效
+        쿼리 큐 관리자 현재 메모리
+        큐에 객체가 나타나면 이 알고리즘이 유효하지 않습니다.
         """
         total_memory = sum(queue.get_memory() for queue in self.queues.values())
         return total_memory
