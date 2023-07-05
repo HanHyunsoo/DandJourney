@@ -1,4 +1,4 @@
-import os
+import os, re
 
 from interactions import Extension, listen, Client
 
@@ -74,12 +74,15 @@ class BotEventCls(Extension):
                         signalChannel = self.client.get_channel(int(_DiscordQueue["Channel"] if BotSettings["BotOpt"]["AGENT_SIGN"] else message.channel.id))
                         await signalChannel.send(content = "<@{}>".format(_DiscordQueue["User"]), embeds = _emb, attachments=[])
 
-                        remove_number = lambda x: x[4:]
+                        # _emb에서 description을 불러오는데 줄바꿈 기준으로 나눠서 리스트로 가져옴
                         original_descriptions = _emb.description.split('\n\n')
-                        filtered_descriptions = list(map(remove_number, original_descriptions))
+                        # 먀크다운 현태의 링크를 alt요소만 빼고 나머지 괄호, 링크 지우기
+                        filtered_descriptions = [re.sub(r'\[([^]]+)\]\([^)]+\)', r"\1", e) for e in _emb.description.split('\n\n')]
+                        # 앞에있는 숫자 이모티콘 지우기
+                        remove_number = lambda x: x[4:]
+                        filtered_descriptions = list(map(remove_number, filtered_descriptions))
 
-                        print(filtered_descriptions)
-
+                        # 지정된 mongodb에 데이터 저장
                         self.db['images'].insert_one(
                             {
                                 "url": _emb.image.url,
