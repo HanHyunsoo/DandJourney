@@ -1,3 +1,5 @@
+import os
+
 from interactions import Extension, listen, Client
 
 from interactions.api.events import MessageCreate, MessageUpdate
@@ -8,6 +10,8 @@ from .exts.CPMethod import CreateMultipleButtons
 
 from .utils.MsgGene import CreateAgency, CreateMsg, QueueParse
 from .utils.EmbGene import ImageEmb, DescribeEmb
+
+from pymongo import MongoClient
 
 '''
 Event Listen Class
@@ -30,7 +34,20 @@ class BotEventCls(Extension):
         self.MakeVComponent = MakeVComponent[1] if MakeVComponent[0] else None
         self.describeBox = []
         print("버튼 인스턴트화 완료")
-        
+
+        db_url = os.environ.get('MONGODB_URI')
+        db_username = os.environ.get('MONGODB_USERNAME')
+        db_password = os.environ.get('MONGODB_PASSWORD')
+        db_name = os.environ.get('MONGODB_DBNAME')
+
+        self.mongo_client = MongoClient(
+            db_url,
+            username=db_username,
+            password=db_password
+        )
+
+        self.db = self.mongo_client[db_name]
+
 
     @listen()
     async def on_ready(self):
@@ -56,8 +73,23 @@ class BotEventCls(Extension):
 
                         signalChannel = self.client.get_channel(int(_DiscordQueue["Channel"] if BotSettings["BotOpt"]["AGENT_SIGN"] else message.channel.id))
                         await signalChannel.send(content = "<@{}>".format(_DiscordQueue["User"]), embeds = _emb, attachments=[])
+
+                        remove_number = lambda x: x[4:]
+                        original_descriptions = _emb.description.split('\n\n')
+                        filtered_descriptions = list(map(remove_number, original_descriptions))
+
+                        print(filtered_descriptions)
+
+                        self.db['images'].insert_one(
+                            {
+                                "url": _emb.image.url,
+                                "descriptions": filtered_descriptions
+                            }
+                        )
+
                         SystemQueue.delete_queue_value(DQueueFQID, _DiscordQueue["JobID"])
                         print(SystemQueue.queueAllItem(length=True))
+
                     else:
                         self.describeBox.remove(message.id)
             except AttributeError as e:
@@ -72,12 +104,12 @@ class BotEventCls(Extension):
         if message.content == "": return
         if message.author.bot:
             try:
-            # 판단 조건의 수 감소，기타 방치된 병합 
+            # 판단 조건의 수 감소，기타 방치된 병합
             # 테스트한 항목은 삭제할 수 없습니다MidJourney원본 메시지，그렇지 않으면, 예.404_No_Message，중복 생성에 짜증이 난다면，생성된 콘텐츠를 저장하기 위해 섹션을 열 수 있습니다.
-            
+
             # 前置 取出队列의数据
                 Queue_msg = QueueParse(message.content, SystemQueue)
-            
+
             # 1：메시지가Midjourney보내기，관련 정보에 접근할 수 있습니다.，이 메시지에 자동으로 회신하세요.targetID 와 targetHash
 
             # update 1:여기 있습니다.bug그러나 일시적으로 메시지를 통해 대기열의 버튼에 의해 트리거되는 대기열 정보를 가져올 수 없습니다(JobID버튼으로 통과할 수 없음)
@@ -107,8 +139,8 @@ class BotEventCls(Extension):
                     SystemQueue.delete_queue_value(_msgJobID, _JobID)
                     await message.delete(delay=5)
                     print(SystemQueue.queueAllItem(length=True))
-            
-                
+
+
             except IndexError as e:
                 pass
 
