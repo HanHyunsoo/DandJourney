@@ -1,4 +1,6 @@
+import datetime
 import os, re
+from pytz import timezone
 
 from interactions import Extension, listen, Client
 
@@ -86,7 +88,8 @@ class BotEventCls(Extension):
                         self.db['images'].insert_one(
                             {
                                 "url": _emb.image.url,
-                                "descriptions": filtered_descriptions
+                                "descriptions": filtered_descriptions,
+                                'createdAt': datetime.datetime.now(tz=timezone('Asia/Seoul'))
                             }
                         )
 
@@ -139,6 +142,15 @@ class BotEventCls(Extension):
                         await signalChannel.send(content = _user, components = self.MakeVComponent, embeds = _embed, attachments=[])
                     else:
                         pass
+
+                    self.db['images2'].insert_one(
+                        {
+                            'prompt': _embed.fields[0].value.split('--v')[0].strip(),
+                            'url': _embed.image.url,
+                            'createdAt': datetime.datetime.now(tz=timezone('Asia/Seoul'))
+                        }
+                    )
+
                     SystemQueue.delete_queue_value(_msgJobID, _JobID)
                     await message.delete(delay=5)
                     print(SystemQueue.queueAllItem(length=True))
